@@ -3,7 +3,8 @@ package geoip
 // Providers is a map of known providers
 var Providers = map[string]*Provider{
 	"freegeoip.app": &Provider{
-		TemplateURL: "https://freegeoip.app/json/%s",
+		Name:        "freegeoip.app",
+		TemplateURL: "https://freegeoip.app/json/%[1]s",
 		Mappings: Location{
 			CountryCode: "country_code",
 			Country:     "country_name",
@@ -14,7 +15,8 @@ var Providers = map[string]*Provider{
 		},
 	},
 	"db-ip.com": &Provider{
-		TemplateURL: "http://api.db-ip.com/v2/free/%s",
+		Name:        "db-ip.com",
+		TemplateURL: "http://api.db-ip.com/v2/free/%[1]s",
 		Mappings: Location{
 			CountryCode: "countryCode",
 			Country:     "countryName",
@@ -24,7 +26,8 @@ var Providers = map[string]*Provider{
 		},
 	},
 	"keycdn.com": &Provider{
-		TemplateURL: "https://tools.keycdn.com/geo.json?host=%s",
+		Name:        "keycdn.com",
+		TemplateURL: "https://tools.keycdn.com/geo.json?host=%[1]s",
 		Mappings: Location{
 			CountryCode: "data.geo.country_code",
 			Country:     "data.geo.country_name",
@@ -36,7 +39,8 @@ var Providers = map[string]*Provider{
 		},
 	},
 	"ip-api.com": &Provider{
-		TemplateURL: "http://ip-api.com/json/%s",
+		Name:        "ip-api.com",
+		TemplateURL: "http://ip-api.com/json/%[1]s",
 		Mappings: Location{
 			CountryCode: "countryCode",
 			Country:     "country",
@@ -48,7 +52,8 @@ var Providers = map[string]*Provider{
 		},
 	},
 	"ipinfo.io": &Provider{
-		TemplateURL: "http://ipinfo.io/%s?token=%s",
+		Name:        "ipinfo.io",
+		TemplateURL: "http://ipinfo.io/%[1]s?token=%[2]s",
 		Mappings: Location{
 			Country:    "country",
 			RegionCode: "region",

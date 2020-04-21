@@ -16,11 +16,25 @@ import (
 // Provider contains the URL template to a 3rd party IP geolocation API
 // and the mappings from the provider's json fields to Location fields
 type Provider struct {
-	TemplateURL string
+	Name        string
+	TemplateURL string // must always contain a %[1]s for the IP/hostname
 	Mappings    Location
 }
 
-func (p *Provider) doRequest(ctx context.Context, hostname string, params ...interface{}) (*Location, error) {
+func (p *Provider) getURL(hostname string, params []string) string {
+	args := make([]interface{}, len(params)+1)
+	args[0] = hostname
+	for i, p := range params {
+		args[i+1] = p
+	}
+	url := fmt.Sprintf(p.TemplateURL, args...)
+	if i := strings.Index(url, "%!(EXTRA"); i != -1 {
+		url = url[:i]
+	}
+	return url
+}
+
+func (p *Provider) doRequest(ctx context.Context, hostname string, params []string) (*Location, error) {
 	if !govalidator.IsHost(hostname) {
 		return nil, fmt.Errorf("not a hostname: %s", hostname)
 	}
@@ -34,8 +48,11 @@ func (p *Provider) doRequest(ctx context.Context, hostname string, params ...int
 		return nil, fmt.Errorf("IP %s is private", ip.String())
 	}
 
-	apiurl := fmt.Sprintf(p.TemplateURL, append([]interface{}{ip.String()}, params...)...)
-	req, _ := http.NewRequest("GET", apiurl, nil)
+	req, err := http.NewRequest("GET", p.getURL(ip.String(), params), nil)
+	if err != nil {
+		return nil, err
+	}
+
 	req.Header.Set("User-Agent", browser.Random())
 	req.Header.Add("accept", "application/json")
 	req.Header.Add("content-type", "application/json")
