@@ -28,7 +28,10 @@ func main() {
 	serveLocation := func(w http.ResponseWriter, r *http.Request) {
 		var hostname string
 		if len(r.URL.Path) <= 1 {
-			hostname, _, _ = net.SplitHostPort(r.RemoteAddr)
+			hostname = r.Header.Get("X-REAL-IP")
+			if len(hostname) == 0 {
+				hostname, _, _ = net.SplitHostPort(r.RemoteAddr)
+			}
 		} else {
 			hostname = r.URL.Path[1:]
 		}
