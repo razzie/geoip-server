@@ -12,7 +12,7 @@ import (
 
 func main() {
 	port := flag.Int("port", 8080, "http port")
-	provider := flag.String("provider", "freegeoip.app", "IP geolocation data provider name")
+	provider := flag.String("provider", "ip-api.com", "IP geolocation data provider name")
 	flag.Parse()
 
 	client := geoip.Providers[*provider].NewClient()
