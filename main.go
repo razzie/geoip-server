@@ -43,7 +43,7 @@ func main() {
 			}
 		}
 
-		loc, err := client(r.Context(), hostname)
+		loc, err := client.GetLocation(r.Context(), hostname)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
