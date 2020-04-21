@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"log"
 	"net"
 	"net/http"
@@ -15,8 +16,16 @@ func main() {
 	redisPw := flag.String("redis-pw", "", "Redis password")
 	redisDb := flag.Int("redis-db", 0, "Redis database (0-15)")
 	port := flag.Int("port", 8080, "http port")
-	provider := flag.String("provider", "ip-api.com", "IP geolocation data provider name")
+	providers := flag.String("provider", "ip-api.com", "provider list, eg: \"ipinfo.io xxtokenxx, ip-api.com, freegeoip.app\"")
+	listProviders := flag.Bool("list-providers", false, "List the available providers and then exit")
 	flag.Parse()
+
+	if *listProviders {
+		for p := range geoip.Providers {
+			fmt.Println(p)
+		}
+		return
+	}
 
 	db, err := NewDB(*redisAddr, *redisPw, *redisDb)
 	if err != nil {
@@ -24,7 +33,7 @@ func main() {
 		db = nil
 	}
 
-	client := geoip.Providers[*provider].NewClient()
+	clients := geoip.GetClients(*providers)
 	serveLocation := func(w http.ResponseWriter, r *http.Request) {
 		var hostname string
 		if len(r.URL.Path) <= 1 {
@@ -43,14 +52,19 @@ func main() {
 			}
 		}
 
-		loc, err := client.GetLocation(r.Context(), hostname)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+		for _, c := range clients {
+			loc, err := c.GetLocation(r.Context(), hostname)
+			if err != nil {
+				log.Println(c.Provider(), ":", err)
+				continue
+			}
+
+			_ = db.SetLocation(loc)
+			loc.Serve(w)
 			return
 		}
 
-		_ = db.SetLocation(loc)
-		loc.Serve(w)
+		http.Error(w, "All providers failed", http.StatusInternalServerError)
 	}
 
 	http.HandleFunc("/", serveLocation)

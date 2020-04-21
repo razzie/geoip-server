@@ -1,5 +1,9 @@
 package geoip
 
+import (
+	"strings"
+)
+
 // Providers is a map of known providers
 var Providers = map[string]*Provider{
 	"freegeoip.app": &Provider{
@@ -62,4 +66,22 @@ var Providers = map[string]*Provider{
 			ISP:        "org",
 		},
 	},
+}
+
+// GetClients creates new clients from the comma separated list of provider names
+// Parameters are supported too, eg: "ipinfo.io xxtokenxx, ip-api.com, freegeoip.app"
+func GetClients(providerList string) (clients []Client) {
+	for _, provider := range strings.Split(providerList, ",") {
+		params := strings.Fields(provider)
+		if len(params) == 0 {
+			continue
+		}
+		p, ok := Providers[params[0]]
+		if !ok {
+			continue
+		}
+		client := p.NewClient(params[1:]...)
+		clients = append(clients, client)
+	}
+	return
 }
