@@ -53,13 +53,15 @@ func (srv *Server) handleRequest(w http.ResponseWriter, r *http.Request) {
 	for _, c := range srv.clients {
 		loc, err = c.GetLocation(r.Context(), hostname)
 		if err != nil {
-			log.Println(c.Provider(), ":", err)
+			log.Println(c.Provider(), ":", hostname, ":", err)
 			continue
 		}
 
-		log.Println(c.Provider(), ":", loc.String())
-		_ = srv.db.SetLocation(loc)
+		log.Println(c.Provider(), ":", hostname, ":", loc.String())
 		writeLocation(w, loc)
+		if srv.db != nil {
+			_ = srv.db.SetLocation(loc)
+		}
 		return
 	}
 
