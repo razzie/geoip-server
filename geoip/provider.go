@@ -104,6 +104,8 @@ func (p *Provider) doMapping(loc *Location, data io.Reader) {
 	loc.City = m(p.Mappings.City)
 	loc.TimeZone = m(p.Mappings.TimeZone)
 	loc.ISP = m(p.Mappings.ISP)
+
+	loc.fixCountry()
 }
 
 func getIP(hostname string) net.IP {
