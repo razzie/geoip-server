@@ -4,7 +4,6 @@ import (
 	"flag"
 	"fmt"
 	"log"
-	"net"
 	"net/http"
 	"strconv"
 
@@ -34,42 +33,6 @@ func main() {
 	}
 
 	clients := geoip.GetClients(*providers)
-	serveLocation := func(w http.ResponseWriter, r *http.Request) {
-		var hostname string
-		if len(r.URL.Path) <= 1 {
-			hostname = r.Header.Get("X-REAL-IP")
-			if len(hostname) == 0 {
-				hostname, _, _ = net.SplitHostPort(r.RemoteAddr)
-			}
-		} else {
-			hostname = r.URL.Path[1:]
-		}
-
-		if db != nil {
-			if loc, _ := db.GetLocation(hostname); loc != nil {
-				loc.Serve(w)
-				return
-			}
-		}
-
-		for _, c := range clients {
-			loc, err := c.GetLocation(r.Context(), hostname)
-			if err != nil {
-				log.Println(c.Provider(), ":", err)
-				continue
-			}
-
-			_ = db.SetLocation(loc)
-			loc.Serve(w)
-			return
-		}
-
-		http.Error(w, "All providers failed", http.StatusInternalServerError)
-	}
-
-	http.HandleFunc("/", serveLocation)
-	http.HandleFunc("/favicon.ico", func(w http.ResponseWriter, r *http.Request) {
-		http.Error(w, "Not found", http.StatusNotFound)
-	})
-	log.Fatal(http.ListenAndServe(":"+strconv.Itoa(*port), nil))
+	server := NewServer(db, clients)
+	log.Fatal(http.ListenAndServe(":"+strconv.Itoa(*port), server))
 }
