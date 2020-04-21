@@ -1,6 +1,8 @@
 package geoip
 
 import (
+	"fmt"
+
 	"github.com/biter777/countries"
 )
 
@@ -15,6 +17,22 @@ type Location struct {
 	City        string `json:"city"`
 	TimeZone    string `json:"timezone"`
 	ISP         string `json:"isp,omitempty"`
+}
+
+func (loc Location) String() string {
+	if len(loc.City) > 0 {
+		region := loc.Region
+		if len(region) == 0 {
+			region = loc.RegionCode
+		}
+
+		if len(region) > 0 && region != loc.City {
+			return fmt.Sprintf("%s (%s, %s)", loc.City, loc.Country, region)
+		}
+		return fmt.Sprintf("%s (%s)", loc.City, loc.Country)
+	}
+
+	return loc.Country
 }
 
 func (loc *Location) fixCountry() {

@@ -57,6 +57,7 @@ func (srv *Server) handleRequest(w http.ResponseWriter, r *http.Request) {
 			continue
 		}
 
+		log.Println(c.Provider(), ":", loc.String())
 		_ = srv.db.SetLocation(loc)
 		writeLocation(w, loc)
 		return
