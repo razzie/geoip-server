@@ -53,6 +53,8 @@ func (p *Provider) doRequest(ctx context.Context, hostname string, params ...int
 	var loc Location
 	p.doMapping(&loc, resp.Body)
 
+	loc.IP = ip.String()
+
 	if govalidator.IsDNSName(hostname) {
 		loc.Hostname = hostname
 	} else {
