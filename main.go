@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"flag"
 	"log"
 	"net"
@@ -12,9 +11,18 @@ import (
 )
 
 func main() {
+	redisAddr := flag.String("redis-addr", "localhost:6379", "Redis hostname:port")
+	redisPw := flag.String("redis-pw", "", "Redis password")
+	redisDb := flag.Int("redis-db", 0, "Redis database (0-15)")
 	port := flag.Int("port", 8080, "http port")
 	provider := flag.String("provider", "ip-api.com", "IP geolocation data provider name")
 	flag.Parse()
+
+	db, err := NewDB(*redisAddr, *redisPw, *redisDb)
+	if err != nil {
+		log.Println("failed to connect to database:", err)
+		db = nil
+	}
 
 	client := geoip.Providers[*provider].NewClient()
 	serveLocation := func(w http.ResponseWriter, r *http.Request) {
@@ -25,15 +33,21 @@ func main() {
 			hostname = r.URL.Path[1:]
 		}
 
+		if db != nil {
+			if loc, _ := db.GetLocation(hostname); loc != nil {
+				loc.Serve(w)
+				return
+			}
+		}
+
 		loc, err := client(r.Context(), hostname)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
-		json, _ := json.MarshalIndent(loc, "", "  ")
-		w.Header().Set("Content-Type", "application/json")
-		w.Write(json)
+		_ = db.SetLocation(loc)
+		loc.Serve(w)
 	}
 
 	http.HandleFunc("/", serveLocation)
