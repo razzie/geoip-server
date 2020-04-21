@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"flag"
 	"log"
+	"net"
 	"net/http"
 	"strconv"
 
@@ -17,11 +18,14 @@ func main() {
 
 	client := geoip.Providers[*provider].NewClient()
 	serveLocation := func(w http.ResponseWriter, r *http.Request) {
+		var hostname string
 		if len(r.URL.Path) <= 1 {
-			return
+			hostname, _, _ = net.SplitHostPort(r.RemoteAddr)
+		} else {
+			hostname = r.URL.Path[1:]
 		}
 
-		loc, err := client(r.Context(), r.URL.Path[1:])
+		loc, err := client(r.Context(), hostname)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
