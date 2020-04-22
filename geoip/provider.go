@@ -8,7 +8,6 @@ import (
 	"net/http"
 	"strings"
 
-	browser "github.com/EDDYCJY/fake-useragent"
 	"github.com/asaskevich/govalidator"
 	"github.com/thedevsaddam/gojsonq"
 )
@@ -53,7 +52,6 @@ func (p *Provider) doRequest(ctx context.Context, hostname string, params []stri
 		return nil, err
 	}
 
-	req.Header.Set("User-Agent", browser.Random())
 	req.Header.Add("accept", "application/json")
 	req.Header.Add("content-type", "application/json")
 

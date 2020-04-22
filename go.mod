@@ -3,7 +3,7 @@ module github.com/razzie/geoip-server
 go 1.12
 
 require (
-	github.com/EDDYCJY/fake-useragent v0.2.0
+	github.com/EDDYCJY/fake-useragent v0.2.0 // indirect
 	github.com/PuerkitoBio/goquery v1.5.1 // indirect
 	github.com/asaskevich/govalidator v0.0.0-20200108200545-475eaeb16496
 	github.com/biter777/countries v1.3.1
