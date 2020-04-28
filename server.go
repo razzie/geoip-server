@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"encoding/base64"
 	"encoding/json"
 	"log"
@@ -29,6 +30,30 @@ func NewServer(db *DB, clients []geoip.Client) *Server {
 	return srv
 }
 
+func (srv *Server) getLocation(ctx context.Context, hostname string) (loc *geoip.Location, err error) {
+	if srv.db != nil {
+		if loc, _ = srv.db.GetLocation(hostname); loc != nil {
+			return
+		}
+	}
+
+	for _, c := range srv.clients {
+		loc, err = c.GetLocation(ctx, hostname)
+		if err != nil {
+			log.Println(c.Provider(), ":", hostname, ":", err)
+			continue
+		}
+
+		//log.Println(c.Provider(), ":", hostname, ":", loc.String())
+		if srv.db != nil {
+			_ = srv.db.SetLocation(loc)
+		}
+		return loc, nil
+	}
+
+	return
+}
+
 func (srv *Server) handleRequest(w http.ResponseWriter, r *http.Request) {
 	var hostname string
 	if len(r.URL.Path) <= 1 {
@@ -40,32 +65,28 @@ func (srv *Server) handleRequest(w http.ResponseWriter, r *http.Request) {
 		hostname = r.URL.Path[1:]
 	}
 
-	if srv.db != nil {
-		if loc, _ := srv.db.GetLocation(hostname); loc != nil {
-			writeLocation(w, loc)
-			return
-		}
-	}
+	defer srv.logRequest(r)
 
-	var err error
-	var loc *geoip.Location
-
-	for _, c := range srv.clients {
-		loc, err = c.GetLocation(r.Context(), hostname)
-		if err != nil {
-			log.Println(c.Provider(), ":", hostname, ":", err)
-			continue
-		}
-
-		log.Println(c.Provider(), ":", hostname, ":", loc.String())
-		writeLocation(w, loc)
-		if srv.db != nil {
-			_ = srv.db.SetLocation(loc)
-		}
+	loc, err := srv.getLocation(r.Context(), hostname)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	http.Error(w, err.Error(), http.StatusInternalServerError)
+	writeLocation(w, loc)
+}
+
+func (srv *Server) logRequest(r *http.Request) {
+	ip := r.Header.Get("X-REAL-IP")
+	if len(ip) == 0 {
+		ip, _, _ = net.SplitHostPort(r.RemoteAddr)
+	}
+
+	if loc, _ := srv.getLocation(context.Background(), ip); loc != nil {
+		log.Println(ip, loc.String(), r.RequestURI)
+	} else {
+		log.Println(ip, r.RequestURI)
+	}
 }
 
 func (srv *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
