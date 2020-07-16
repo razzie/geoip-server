@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"net/http"
 
+	"github.com/mo7zayed/reqip"
 	"github.com/razzie/geoip-server/geoip"
 )
 
@@ -22,7 +23,7 @@ func NewClient() *Client {
 	return &Client{ServerAddress: "https://geoip.gorzsony.com"}
 }
 
-// GetLocation requests the location data of an IP or hostname from geoip-server
+// GetLocation retrieves the location data of an IP or hostname from geoip-server
 func (c *Client) GetLocation(ctx context.Context, hostname string) (*geoip.Location, error) {
 	req, _ := http.NewRequest("GET", c.ServerAddress+"/"+hostname, nil)
 	resp, err := http.DefaultClient.Do(req.WithContext(ctx))
@@ -38,4 +39,9 @@ func (c *Client) GetLocation(ctx context.Context, hostname string) (*geoip.Locat
 
 	var loc geoip.Location
 	return &loc, json.Unmarshal(result, &loc)
+}
+
+// GetRequestLocation retrieves the location data of a http.Request from geoip-server
+func (c *Client) GetRequestLocation(ctx context.Context, r *http.Request) (*geoip.Location, error) {
+	return c.GetLocation(ctx, reqip.GetClientIP(r))
 }

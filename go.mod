@@ -8,5 +8,6 @@ require (
 	github.com/asaskevich/govalidator v0.0.0-20200108200545-475eaeb16496
 	github.com/biter777/countries v1.3.1
 	github.com/go-redis/redis/v7 v7.2.0
+	github.com/mo7zayed/reqip v0.0.0-20200520084230-ae375eb9322b
 	github.com/thedevsaddam/gojsonq v2.3.0+incompatible
 )
