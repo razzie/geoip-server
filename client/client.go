@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
+	"net/url"
 
 	"github.com/razzie/geoip-server/geoip"
 )
@@ -15,14 +16,23 @@ type Client struct {
 }
 
 // DefaultClient is the default client
-var DefaultClient = *NewClient()
+var DefaultClient geoip.Client = NewClient("https://geoip.gorzsony.com")
 
 // NewClient returns a new client
-func NewClient() *Client {
-	return &Client{ServerAddress: "https://geoip.gorzsony.com"}
+func NewClient(serverAddr string) *Client {
+	return &Client{ServerAddress: serverAddr}
 }
 
-// GetLocation requests the location data of an IP or hostname from geoip-server
+// Provider returns the provider this client is requesting locations from
+func (c *Client) Provider() string {
+	u, err := url.Parse(c.ServerAddress)
+	if err != nil {
+		return c.ServerAddress
+	}
+	return u.Host
+}
+
+// GetLocation retrieves the location data of an IP or hostname from geoip-server
 func (c *Client) GetLocation(ctx context.Context, hostname string) (*geoip.Location, error) {
 	req, _ := http.NewRequest("GET", c.ServerAddress+"/"+hostname, nil)
 	resp, err := http.DefaultClient.Do(req.WithContext(ctx))
