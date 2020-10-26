@@ -92,7 +92,10 @@ func (p *Provider) doMapping(loc *Location, data io.Reader) {
 
 		v := jq.Find(fieldName)
 		jq.Reset()
-		return fmt.Sprint(v)
+		if v != nil {
+			return fmt.Sprint(v)
+		}
+		return ""
 	}
 
 	loc.CountryCode = m(p.Mappings.CountryCode)
