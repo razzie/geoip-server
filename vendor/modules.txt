@@ -10,5 +10,7 @@ github.com/go-redis/redis/v7/internal/hashtag
 github.com/go-redis/redis/v7/internal/pool
 github.com/go-redis/redis/v7/internal/proto
 github.com/go-redis/redis/v7/internal/util
+# github.com/razzie/reqip v0.0.0-20201102012254-b5eb0ae76a05
+github.com/razzie/reqip
 # github.com/thedevsaddam/gojsonq v2.3.0+incompatible
 github.com/thedevsaddam/gojsonq
