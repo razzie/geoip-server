@@ -15,15 +15,15 @@ type DB struct {
 }
 
 // NewDB returns a new DB
-func NewDB(addr, password string, db int) (*DB, error) {
-	client := redis.NewClient(&redis.Options{
-		Addr:     addr,
-		Password: password,
-		DB:       db,
-	})
-
-	err := client.Ping().Err()
+func NewDB(redisUrl string) (*DB, error) {
+	opt, err := redis.ParseURL(redisUrl)
 	if err != nil {
+		return nil, err
+	}
+
+	client := redis.NewClient(opt)
+
+	if err := client.Ping().Err(); err != nil {
 		client.Close()
 		return nil, err
 	}
@@ -42,8 +42,7 @@ func (db *DB) GetLocation(hostname string) (*geoip.Location, error) {
 	}
 
 	var loc geoip.Location
-	err = json.Unmarshal([]byte(data), &loc)
-	if err != nil {
+	if err = json.Unmarshal([]byte(data), &loc); err != nil {
 		return nil, err
 	}
 
@@ -57,14 +56,12 @@ func (db *DB) SetLocation(loc *geoip.Location) error {
 		return err
 	}
 
-	err = db.client.Set(loc.IP, string(data), db.ExpirationTime).Err()
-	if err != nil {
+	if err = db.client.Set(loc.IP, string(data), db.ExpirationTime).Err(); err != nil {
 		return err
 	}
 
 	if len(loc.Hostname) > 0 {
-		err = db.client.Set(loc.Hostname, string(data), db.ExpirationTime).Err()
-		if err != nil {
+		if err = db.client.Set(loc.Hostname, string(data), db.ExpirationTime).Err(); err != nil {
 			return err
 		}
 	}

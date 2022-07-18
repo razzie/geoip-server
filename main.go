@@ -11,9 +11,7 @@ import (
 )
 
 func main() {
-	redisAddr := flag.String("redis-addr", "localhost:6379", "Redis hostname:port")
-	redisPw := flag.String("redis-pw", "", "Redis password")
-	redisDb := flag.Int("redis-db", 0, "Redis database (0-15)")
+	redisConnStr := flag.String("redis", "redis://localhost:6379", "Redis connection string")
 	port := flag.Int("port", 8080, "http port")
 	providers := flag.String("provider", "ip-api.com", "provider list, eg: \"ipinfo.io xxtokenxx, ip-api.com, freegeoip.app\"")
 	listProviders := flag.Bool("list-providers", false, "List the available providers and then exit")
@@ -26,7 +24,7 @@ func main() {
 		return
 	}
 
-	db, err := NewDB(*redisAddr, *redisPw, *redisDb)
+	db, err := NewDB(*redisConnStr)
 	if err != nil {
 		log.Println("failed to connect to database:", err)
 		db = nil
