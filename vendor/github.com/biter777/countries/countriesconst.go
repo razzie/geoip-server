@@ -115,8 +115,10 @@ const (
 	Comoros CountryCode = 174
 	// Congo                                  CountryCode = 178
 	Congo CountryCode = 178
-	// CongoDemocracticRepublic               CountryCode = 180
-	CongoDemocracticRepublic CountryCode = 180
+	// CongoDemocraticRepublic                CountryCode = 180
+	CongoDemocraticRepublic CountryCode = 180
+	// CongoDemocracticRepublic - deprecated
+	CongoDemocracticRepublic CountryCode = CongoDemocraticRepublic
 	// CookIslands                            CountryCode = 184
 	CookIslands CountryCode = 184
 	// CostaRica                              CountryCode = 188
@@ -203,8 +205,10 @@ const (
 	Guyana CountryCode = 328
 	// Haiti                                  CountryCode = 332
 	Haiti CountryCode = 332
-	// HeardIslandandMcDonaldIslands          CountryCode = 334
-	HeardIslandandMcDonaldIslands CountryCode = 334
+	// HeardIslandAndMcDonaldIslands          CountryCode = 334
+	HeardIslandAndMcDonaldIslands CountryCode = 334
+	// HeardIslandandMcDonaldIslands - deprecated
+	HeardIslandandMcDonaldIslands CountryCode = HeardIslandAndMcDonaldIslands
 	// Honduras                               CountryCode = 340
 	Honduras CountryCode = 340
 	// HongKong                               CountryCode = 344
@@ -421,8 +425,8 @@ const (
 	Spain CountryCode = 724
 	// SriLanka                               CountryCode = 144
 	SriLanka CountryCode = 144
-	// Sudan                                  CountryCode = 736
-	Sudan CountryCode = 736
+	// Sudan                                  CountryCode = 729
+	Sudan CountryCode = 729
 	// Suriname                               CountryCode = 740
 	Suriname CountryCode = 740
 	// SvalbardAndJanMayenIslands             CountryCode = 744
@@ -957,8 +961,8 @@ const (
 	ES CountryCode = 724
 	// LK CountryCode = 144
 	LK CountryCode = 144
-	// SD CountryCode = 736
-	SD CountryCode = 736
+	// SD CountryCode = 729
+	SD CountryCode = 729
 	// SR CountryCode = 740
 	SR CountryCode = 740
 	// SJ CountryCode = 744
@@ -1469,8 +1473,8 @@ const (
 	ESP CountryCode = 724
 	// LKA CountryCode = 144
 	LKA CountryCode = 144
-	// SDN CountryCode = 736
-	SDN CountryCode = 736
+	// SDN CountryCode = 729
+	SDN CountryCode = 729
 	// SUR CountryCode = 740
 	SUR CountryCode = 740
 	// SJM CountryCode = 744

@@ -25,7 +25,7 @@ const (
 	CurrencyBahrainiDinar                  CurrencyCode = 48
 	CurrencyTaka                           CurrencyCode = 50
 	CurrencyBarbadosDollar                 CurrencyCode = 52
-	CurrencyBelarussianRuble               CurrencyCode = 974
+	CurrencyBelarussianRuble               CurrencyCode = 933
 	CurrencyBelizeDollar                   CurrencyCode = 84
 	CurrencyCFAFrancBCEAO                  CurrencyCode = 952
 	CurrencyBermudianDollar                CurrencyCode = 60
@@ -174,7 +174,8 @@ const (
 	CurrencyPesoUruguayo                   CurrencyCode = 858
 	CurrencyUzbekistanSum                  CurrencyCode = 860
 	CurrencyVatu                           CurrencyCode = 548
-	CurrencyBolivar                        CurrencyCode = 937
+	CurrencyBolivar                        CurrencyCode = 928
+	CurrencyBolivarDeprecated              CurrencyCode = 937
 	CurrencyDong                           CurrencyCode = 704
 	CurrencyYemeniRial                     CurrencyCode = 886
 	CurrencyZambianKwacha                  CurrencyCode = 967
@@ -201,7 +202,7 @@ const (
 	CurrencyBHD CurrencyCode = 48
 	CurrencyBDT CurrencyCode = 50
 	CurrencyBBD CurrencyCode = 52
-	CurrencyBYR CurrencyCode = 974
+	CurrencyBYN CurrencyCode = 933
 	CurrencyBZD CurrencyCode = 84
 	CurrencyXOF CurrencyCode = 952
 	CurrencyBMD CurrencyCode = 60
@@ -229,6 +230,7 @@ const (
 	CurrencyCDF CurrencyCode = 976
 	CurrencyNZD CurrencyCode = 554
 	CurrencyCRC CurrencyCode = 188
+	// Deprecated: Croatian Kuna is no longer in circulation, use CurrencyEUR instead.
 	CurrencyHRK CurrencyCode = 191
 	CurrencyCUC CurrencyCode = 931
 	CurrencyCUP CurrencyCode = 192
@@ -347,6 +349,7 @@ const (
 	CurrencyUYU CurrencyCode = 858
 	CurrencyUZS CurrencyCode = 860
 	CurrencyVUV CurrencyCode = 548
+	CurrencyVES CurrencyCode = 928
 	CurrencyVEF CurrencyCode = 937
 	CurrencyVND CurrencyCode = 704
 	CurrencyYER CurrencyCode = 886
